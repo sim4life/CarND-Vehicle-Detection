@@ -37,6 +37,8 @@ def save_bboxes(box_list, box_file='bbox_pickle.p'):
     bbox_pickle = box_list
     pickle.dump( bbox_pickle, open( box_file, "wb" ) )
 
+# def find_boxes_overlap(box_A, box_B):
+    # if box
 # Perform normalisation on image
 def normalise(image):
     return (image - image.mean()) / (image.max() - image.min())
