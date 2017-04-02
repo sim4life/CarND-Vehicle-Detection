@@ -275,6 +275,7 @@ def run_image_pipeline(image):
     # global hog_trainer
     draw_img = np.copy(image)
     image = image.astype(np.float32)/255
+    image = normalise(image)
     # print("run_image_pipeline hog_trainer: ",hog_trainer.printVals())
     # print("type hog_trainer:", type(hog_trainer))
     # print("hog_trainer color_space:", hog_trainer.color_space)
@@ -306,6 +307,7 @@ def run_pipeline(pipeline, test_img, images_path='dataset', video_file='test_vid
     # image = cv2.imread(test_img)
     image = mpimg.imread(test_img)
     image = image.astype(np.float32)/255
+    image = normalise(image)
     # svc, X_scaler = 0, 0
     if 'train' in pipeline:
         svc, X_scaler = perform_training(hog_trainer, images_path=images_path, param_file=param_file)
