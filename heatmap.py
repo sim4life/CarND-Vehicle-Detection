@@ -26,6 +26,7 @@ def apply_threshold(heatmap, threshold):
     return heatmap
 
 def draw_labeled_bboxes(img, labels):
+    boxes = []
     # Iterate through all detected cars
     for car_number in range(1, labels[1]+1):
         # Find pixels with each car_number label value
@@ -37,8 +38,9 @@ def draw_labeled_bboxes(img, labels):
         bbox = ((np.min(nonzerox), np.min(nonzeroy)), (np.max(nonzerox), np.max(nonzeroy)))
         # Draw the box on the image
         cv2.rectangle(img, bbox[0], bbox[1], (0,0,255), 6)
+        boxes.append(bbox)
     # Return the image
-    return img
+    return img, boxes
 
 def draw_heatmap(img, box_list):
     # global box_list
@@ -89,9 +91,9 @@ def process_heatmap(img, box_list):
 
     # Find final boxes from heatmap using label function
     labels = label(heatmap)
-    draw_img = draw_labeled_bboxes(np.copy(img), labels)
+    draw_img, boxes = draw_labeled_bboxes(np.copy(img), labels)
 
-    return draw_img, heatmap
+    return draw_img, heatmap, boxes
 
 def main(argv):
     # image = mpimg.imread('cutouts/cutout1.jpg')

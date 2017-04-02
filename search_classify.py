@@ -264,8 +264,6 @@ def process_search_boxes(image, svc, X_scaler, hog_trainer):
 
 
 def perform_training(hog_trainer, images_path='dataset', param_file='output_rsc/svc_pickle.p'):
-    ### TODO: Tweak these parameters and see how the results change.
-
     # cars, notcars = load_images(images_path)
     svc, X_scaler = train_classifier(hog_trainer, images_path=images_path, param_file=param_file)
     # svc, X_scaler = hog_trainer.train_classifier(cars, notcars, param_file)
@@ -283,7 +281,7 @@ def run_image_pipeline(image):
     # print("after hog_trainer print")
     # print("svc is:", svc)
     hot_boxes, window_img = process_search_boxes(image, svc, X_scaler, hog_trainer)
-    draw_img, heatmap = process_heatmap(draw_img, hot_boxes)
+    draw_img, heatmap, boxes = process_heatmap(draw_img, hot_boxes)
     # return draw_img
     return draw_img
 
@@ -333,7 +331,8 @@ def run_pipeline(pipeline, test_img, images_path='dataset', video_file='test_vid
         if 'train' not in pipeline and 'sub' not in pipeline:
             box_list = pickle.load( open( box_file, "rb" ))
 
-        draw_img, heatmap = draw_heatmap(image, box_list)
+        draw_img, heatmap, boxes = draw_heatmap(image, box_list)
+        print("heatmap boxes are:", boxes)
     if 'vid' in pipeline:
         input_video_file = video_file
         output_video_file = input_video_file.split(".")[0] + '_proc.' + input_video_file.split(".")[1]
@@ -433,7 +432,7 @@ def main(argv):
     hog_trainer.color_space = colorspace #'RGB2YCrCb'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
     hog_trainer.orient = orient  # HOG orientations
     hog_trainer.pix_per_cell = 8 # HOG pixels per cell
-    hog_trainer.cell_per_block = 4 # HOG cells per block
+    hog_trainer.cell_per_block = 5 # HOG cells per block
     hog_trainer.hog_channel = hog_channel # Can be 0, 1, 2, or "ALL"
     hog_trainer.trans_sqrt = trans_sqrt # transform square root, True, False
     hog_trainer.spatial_size = (spat_size, spat_size) # Spatial binning dimensions
