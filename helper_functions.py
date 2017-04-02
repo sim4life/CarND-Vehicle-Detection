@@ -37,8 +37,26 @@ def save_bboxes(box_list, box_file='bbox_pickle.p'):
     bbox_pickle = box_list
     pickle.dump( bbox_pickle, open( box_file, "wb" ) )
 
-# def find_boxes_overlap(box_A, box_B):
-    # if box
+def find_boxes_overlap(box_A, box_B):
+    # box1 = (xmin1, xmax1)
+    # box2 = (xmin2, xmax2)
+    # overlapping1D(box1,box2) = xmax1 >= xmin2 and xmax2 >= xmin1
+    #
+    # box1 = (x:(xmin1,xmax1),y:(ymin1,ymax1))
+    # box2 = (x:(xmin2,xmax2),y:(ymin2,ymax2))
+    # overlapping2D(box1,box2) = overlapping1D(box1.x, box2.x) and
+    #                        overlapping1D(box1.y, box2.y)
+
+    print("box_A is:", box_A)
+    print("box_B is:", box_B)
+    box1 = {x:(box_A[0][0],box_A[1][0]),y:(box_A[1][0],box_A[1][1])}
+    box2 = {x:(box_B[0][0],box_B[1][0]),y:(box_B[1][0],box_B[1][1])}
+    print("box1 is:", box1)
+    print("box2 is:", box2)
+
+    # overlapping2D(box1,box2) = overlapping1D(box1.x, box2.x) and
+    #                        overlapping1D(box1.y, box2.y)
+
 # Perform normalisation on image
 def normalise(image):
     return (image - image.mean()) / (image.max() - image.min())

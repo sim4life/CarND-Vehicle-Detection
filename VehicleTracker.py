@@ -1,4 +1,5 @@
 import numpy as np
+from helper_functions import find_boxes_overlap
 
 class VehicleTracker():
     def __init__(self):
@@ -23,4 +24,8 @@ class VehicleTracker():
             self.retain_boxes = boxes
             self.recent_nboxes = boxes
             self.recent_retain_boxes = boxes
-        # else:
+        else:
+            for box in boxes:
+                for r_box in self.recent_retain_boxes:
+                if find_boxes_overlap(box, r_box):
+                    print("box: {} overlaps with box:{}".format(box, r_box))
