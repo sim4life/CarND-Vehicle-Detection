@@ -1,0 +1,8 @@
+.DS_Store
+.backup
+__pycache__
+data
+dataset
+*_proc.mp4
+!test_video_proc.mp4
+!project_video_proc.mp4
