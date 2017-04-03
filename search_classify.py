@@ -445,7 +445,7 @@ def main(argv):
     hog_trainer.color_space = colorspace #'RGB2YCrCb'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
     hog_trainer.orient = orient  # HOG orientations
     hog_trainer.pix_per_cell = 8 # HOG pixels per cell
-    hog_trainer.cell_per_block = 4 # HOG cells per block
+    hog_trainer.cell_per_block = 6 # HOG cells per block
     hog_trainer.hog_channel = hog_channel # Can be 0, 1, 2, or "ALL"
     hog_trainer.trans_sqrt = trans_sqrt # transform square root, True, False
     hog_trainer.spatial_size = (spat_size, spat_size) # Spatial binning dimensions
