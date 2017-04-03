@@ -100,8 +100,8 @@ def process_heatmap_history(img, all_bbox_list, recent_frames_used=20, threshold
     # global heatmap
 
     # Finding out valid recent_frames_used
-    if len(all_box_list) < recent_frames_used + 1:
-        recent_frames_used = len(all_box_list) - 1
+    if len(all_bbox_list) < recent_frames_used + 1:
+        recent_frames_used = len(all_bbox_list) - 1
 
     frame_heat = np.zeros_like(img[:,:,0]).astype(np.float)
 
