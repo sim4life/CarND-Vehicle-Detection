@@ -36,26 +36,26 @@ You're reading it!
 
 ####1. Explain how (and identify where in your code) you extracted HOG features from the training images.
 
-The code for this step is contained in the lines 65 through 82 of the file called `helper_functions.py`.  
+The code for this step is contained in the function `get_hog_features()` lines 65 through 82 of the file called `helper_functions.py`.  This gets called by the function `single_img_features()` lines 123 through 156, which in turn gets called by the function `extract_features()` lines 160 through 179 for each image in the list of images array argument.
 
-I started by reading in all the `vehicle` and `non-vehicle` images.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
+I started by reading in all the `vehicle` and `non-vehicle` images in the function `train_classifier()` of file `search_classify.py` lines 94 through 107.  Here is an example of one of each of the `vehicle` and `non-vehicle` classes:
 
 ![alt text][image1]
 
 I then explored different color spaces and different `skimage.hog()` parameters (`orientations`, `pixels_per_cell`, and `cells_per_block`).  I grabbed random images from each of the two classes and displayed them to get a feel for what the `skimage.hog()` output looks like.
 
-Here is an example using the `YCrCb` color space and HOG parameters of `orientations=8`, `pixels_per_cell=(8, 8)` and `cells_per_block=(2, 2)`:
+Here is an example using the `YCrCb` color space and HOG parameters of `orientations=5`, `pixels_per_cell=(8, 8)` and `cells_per_block=(5, 5)`:
 
 
 ![alt text][image2]
 
 ####2. Explain how you settled on your final choice of HOG parameters.
 
-I tried various combinations of parameters and...
+I tried various combinations of parameters and input normalisation techniques. I found the above parameters to train with almost 98% test accuracy and showing good results in the video output.
 
 ####3. Describe how (and identify where in your code) you trained a classifier using your selected HOG features (and color features if you used them).
 
-I trained a linear SVM using...
+I trained a linear SVM in the function `train_classifier()` of file `search_classify.py` lines 110 through 142 using Standard Scalar function for inputs and randomised data for training and test sets.
 
 ###Sliding Window Search
 
