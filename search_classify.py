@@ -247,7 +247,7 @@ def search_draw_boxes(image, svc, X_scaler, hog_trainer, box_file='output_rsc/bb
 def process_search_boxes(image, svc, X_scaler, hog_trainer):
     draw_image = np.copy(image)
 
-    x_start_stop=[None, None]
+    x_start_stop=[int(image.shape[1] * 0.4), None]
     y_start_stop = [int(image.shape[0] * 0.5), int(image.shape[0] * 0.95)] # Min and max in y to search in slide_window()
     # y_start_stop[0] = int(image.shape[0] * 0.5)
     # y_start_stop[1] = int(image.shape[0] * 0.9)
@@ -291,7 +291,8 @@ def run_image_pipeline(image):
     hot_boxes_list.append(hot_boxes)
 
     # draw_img, heatmap, boxes = process_heatmap(draw_img, hot_boxes)
-    draw_img, heatmap, bboxes = process_heatmap_history(draw_img, hot_boxes_list, recent_frames_used=22, threshold=7)
+    # draw_img, heatmap, bboxes = process_heatmap_history(draw_img, hot_boxes_list, recent_frames_used=22, threshold=7)
+    draw_img, heatmap, bboxes = process_heatmap(draw_img, hot_boxes)
     bboxes_list.append(bboxes)
     # veh_tracker.isVehicleDetected(boxes)
     # return draw_img
@@ -444,7 +445,7 @@ def main(argv):
     hog_trainer.color_space = colorspace #'RGB2YCrCb'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
     hog_trainer.orient = orient  # HOG orientations
     hog_trainer.pix_per_cell = 8 # HOG pixels per cell
-    hog_trainer.cell_per_block = 5 # HOG cells per block
+    hog_trainer.cell_per_block = 4 # HOG cells per block
     hog_trainer.hog_channel = hog_channel # Can be 0, 1, 2, or "ALL"
     hog_trainer.trans_sqrt = trans_sqrt # transform square root, True, False
     hog_trainer.spatial_size = (spat_size, spat_size) # Spatial binning dimensions
