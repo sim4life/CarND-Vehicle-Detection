@@ -291,7 +291,7 @@ def run_image_pipeline(image):
     hot_boxes_list.append(hot_boxes)
 
     # draw_img, heatmap, boxes = process_heatmap(draw_img, hot_boxes)
-    draw_img, heatmap, bboxes = process_heatmap_history(draw_img, hot_boxes_list)
+    draw_img, heatmap, bboxes = process_heatmap_history(draw_img, hot_boxes_list, recent_frames_used=23, threshold=5)
     bboxes_list.append(bboxes)
     # veh_tracker.isVehicleDetected(boxes)
     # return draw_img
