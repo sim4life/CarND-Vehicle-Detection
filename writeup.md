@@ -61,7 +61,14 @@ I trained a linear SVM in the function `train_classifier()` of file `search_clas
 
 ####1. Describe how (and identify where in your code) you implemented a sliding window search.  How did you decide what scales to search and how much to overlap windows?
 
-I decided to search random window positions at random scales all over the image and came up with this (ok just kidding I didn't actually ;):
+In file `search_classify.py`, I performed sliding window search on all the window positions at the scales of 
+
+	x_start = 40% of image X size
+	x_end  = end of image X size
+	y_start = 50% of image Y size
+	y_end  = 95% of image Y size
+
+I did this in the function `process_search_boxes()` lines 183 through 196.
 
 ![alt text][image3]
 
