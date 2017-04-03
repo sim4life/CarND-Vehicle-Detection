@@ -195,7 +195,7 @@ def search_windows(img, windows, clf, scaler, hog_trainer):
     for window in windows:
         #3) Extract the test window from original image
         test_img = cv2.resize(img[window[0][1]:window[1][1], window[0][0]:window[1][0]], (64, 64))
-        test_img = normalise(test_img)
+        # test_img = normalise(test_img)
         #4) Extract features for that window using single_img_features()
         features = single_img_features(test_img, color_space=hog_trainer.color_space,
                             spatial_size=hog_trainer.spatial_size, hist_bins=hog_trainer.hist_bins,

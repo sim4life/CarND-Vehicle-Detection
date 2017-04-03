@@ -170,7 +170,7 @@ def extract_features(imgs, color_space='RGB', spatial_size=(32, 32),
         # image = cv2.imread(img)
         image = mpimg.imread(img)
         # Normalise input
-        image = normalise(image)
+        # image = normalise(image)
 
         img_features = single_img_features(image, color_space, spatial_size, hist_bins, orient, pix_per_cell, \
                                 cell_per_block, hog_channel, t_sqrt, spatial_feat, hist_feat, hog_feat)

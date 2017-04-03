@@ -95,19 +95,19 @@ def process_heatmap(img, box_list):
 
     return draw_img, heatmap, boxes
 
-def process_heatmap_history(img, all_box_list, recent_frames_used=20, threshold=5):
+def process_heatmap_history(img, all_bbox_list, recent_frames_used=20, threshold=5):
     # global box_list
     # global heatmap
 
-    # Adjust parameters if needed
+    # Finding out valid recent_frames_used
     if len(all_box_list) < recent_frames_used + 1:
         recent_frames_used = len(all_box_list) - 1
 
     frame_heat = np.zeros_like(img[:,:,0]).astype(np.float)
 
     # Construct heatmap of history
-    for boxlist in all_box_list[-recent_frames_used:]:
-        frame_heat = add_heat(frame_heat, boxlist)
+    for bbox_list in all_bbox_list[-recent_frames_used:]:
+        frame_heat = add_heat(frame_heat, bbox_list)
 
 
     # Apply threshold to help remove false positives
