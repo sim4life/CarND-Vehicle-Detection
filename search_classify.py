@@ -18,13 +18,17 @@ from skimage.feature import hog
 from helper_functions import *
 from sklearn.model_selection import train_test_split
 from Trainer import Trainer
+from VehicleTracker import VehicleTracker
 from hog_subsample import find_subsample
-from heatmap import draw_heatmap, process_heatmap
+from heatmap import draw_heatmap, process_heatmap, process_heatmap_history
 # from sklearn.cross_validation import train_test_split
 
 svc = 0
 X_scaler = 0
+bboxes_list = []
+hot_boxes_list = []
 hog_trainer = Trainer()
+veh_tracker = VehicleTracker()
 param_file = 'output_rsc/svc_pickle.p'
 
 def save_params(svc, X_scaler, hog_trainer, param_file='output_rsc/svc_pickle.p'):
@@ -272,6 +276,9 @@ def perform_training(hog_trainer, images_path='dataset', param_file='output_rsc/
 
 def run_image_pipeline(image):
     # global hog_trainer
+    global hot_boxes_list
+    global bboxes_list
+
     draw_img = np.copy(image)
     image = image.astype(np.float32)/255
     # image = normalise(image)
@@ -281,7 +288,12 @@ def run_image_pipeline(image):
     # print("after hog_trainer print")
     # print("svc is:", svc)
     hot_boxes, window_img = process_search_boxes(image, svc, X_scaler, hog_trainer)
-    draw_img, heatmap, boxes = process_heatmap(draw_img, hot_boxes)
+    hot_boxes_list.append(hot_boxes)
+
+    # draw_img, heatmap, boxes = process_heatmap(draw_img, hot_boxes)
+    draw_img, heatmap, bboxes = process_heatmap_history(draw_img, hot_boxes_list)
+    bboxes_list.append(bboxes)
+    # veh_tracker.isVehicleDetected(boxes)
     # return draw_img
     return draw_img
 
@@ -332,7 +344,7 @@ def run_pipeline(pipeline, test_img, images_path='dataset', video_file='test_vid
             box_list = pickle.load( open( box_file, "rb" ))
 
         draw_img, heatmap, boxes = draw_heatmap(image, box_list)
-        print("heatmap boxes are:", boxes)
+        # print("heatmap boxes are:", boxes)
     if 'vid' in pipeline:
         input_video_file = video_file
         output_video_file = input_video_file.split(".")[0] + '_proc.' + input_video_file.split(".")[1]

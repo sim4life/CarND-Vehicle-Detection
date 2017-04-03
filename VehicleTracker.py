@@ -27,5 +27,5 @@ class VehicleTracker():
         else:
             for box in boxes:
                 for r_box in self.recent_retain_boxes:
-                if find_boxes_overlap(box, r_box):
-                    print("box: {} overlaps with box:{}".format(box, r_box))
+                    if find_boxes_overlap(box, r_box):
+                        print("box: {} overlaps with box:{}".format(box, r_box))

@@ -60,7 +60,7 @@ def draw_heatmap(img, box_list):
     # labels = label(heatmap)
     # draw_img = draw_labeled_bboxes(np.copy(img), labels)
 
-    draw_img, heatmap = process_heatmap(img, box_list)
+    draw_img, heatmap, boxes = process_heatmap(img, box_list)
     fig = plt.figure()
     plt.subplot(121)
     # plt.imshow(cv2.cvtColor(draw_img, cv2.COLOR_BGR2RGB))
@@ -72,7 +72,7 @@ def draw_heatmap(img, box_list):
     fig.tight_layout()
     plt.show()
 
-    return draw_img, heatmap
+    return draw_img, heatmap, boxes
 
 def process_heatmap(img, box_list):
     # global box_list
@@ -94,6 +94,33 @@ def process_heatmap(img, box_list):
     draw_img, boxes = draw_labeled_bboxes(np.copy(img), labels)
 
     return draw_img, heatmap, boxes
+
+def process_heatmap_history(img, all_box_list, recent_frames_used=20, threshold=5):
+    # global box_list
+    # global heatmap
+
+    # Adjust parameters if needed
+    if len(all_box_list) < recent_frames_used + 1:
+        recent_frames_used = len(all_box_list) - 1
+
+    frame_heat = np.zeros_like(img[:,:,0]).astype(np.float)
+
+    # Construct heatmap of history
+    for boxlist in all_box_list[-recent_frames_used:]:
+        frame_heat = add_heat(frame_heat, boxlist)
+
+
+    # Apply threshold to help remove false positives
+    frame_heat = apply_threshold(frame_heat,threshold)
+
+    # Visualize the heatmap when displaying
+    heatmap = np.clip(frame_heat, 0, 255)
+
+    # Find final boxes from heatmap using label function
+    labels = label(heatmap)
+    draw_img, bboxes = draw_labeled_bboxes(np.copy(img), labels)
+
+    return draw_img, heatmap, bboxes
 
 def main(argv):
     # image = mpimg.imread('cutouts/cutout1.jpg')
