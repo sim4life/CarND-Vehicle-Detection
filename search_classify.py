@@ -21,7 +21,6 @@ from Trainer import Trainer
 from VehicleTracker import VehicleTracker
 from hog_subsample import find_subsample
 from heatmap import draw_heatmap, process_heatmap, process_heatmap_history
-# from sklearn.cross_validation import train_test_split
 
 svc = 0
 X_scaler = 0
@@ -49,25 +48,9 @@ def save_params(svc, X_scaler, hog_trainer, param_file='output_rsc/svc_pickle.p'
     pickle.dump( svc_pickle, open( param_file, "wb" ) )
 
 def load_params(hog_trainer, param_file='output_rsc/svc_pickle.p'):
-    print("\n\nload_params called\n\n")
-
     svc_pickle = pickle.load( open(param_file, "rb" ) )
     svc = svc_pickle["svc"]
     X_scaler = svc_pickle["scaler"]
-    # hog_trainer = Trainer(
-    #     color_space = svc_pickle["color_space"],
-    #     orient = svc_pickle["orient"],
-    #     pix_per_cell = svc_pickle["pix_per_cell"],
-    #     cell_per_block = svc_pickle["cell_per_block"],
-    #     spatial_size = svc_pickle["spatial_size"],
-    #     hist_bins = svc_pickle["hist_bins"],
-    #     hog_channel = svc_pickle["hog_channel"],
-    #     trans_sqrt = svc_pickle["trans_sqrt"],
-    #     spatial_feat = svc_pickle["spatial_feat"],
-    #     hist_feat = svc_pickle["hist_feat"],
-    #     hog_feat = svc_pickle["hog_feat"])
-
-    # print("before load_params hog_trainer: ",hog_trainer.printVals())
 
     hog_trainer.color_space = svc_pickle["color_space"]
     hog_trainer.orient = svc_pickle["orient"]
@@ -81,8 +64,6 @@ def load_params(hog_trainer, param_file='output_rsc/svc_pickle.p'):
     hog_trainer.hist_feat = svc_pickle["hist_feat"]
     hog_trainer.hog_feat = svc_pickle["hog_feat"]
 
-    # print("after load_params hog_trainer: ",hog_trainer.printVals())
-
     return svc, X_scaler, hog_trainer
 
 
@@ -90,41 +71,20 @@ def load_images(path='dataset'):
     # Read in cars and notcars
     cars = []
     notcars = []
-    # images = []
-    # for dirpath, dirs, files in os.walk(path):
-    #     for filename in fnmatch.filter(files, '*.jpeg'):
-    #         images.append(os.path.join(dirpath, filename))
 
     print("Reading images from :", path)
-
-    # print("number of images read:", len(images))
-    # print("images type:", type(images))
-    # print("images[0] type:", type(images[0]))
-    # print("images[0] dtype:", type(images[0].dtype))
-    # print("images[0] shape:", type(images[0].shape))
-    # for image in images:
-    #     if 'image' in image or 'extra' in image:
-    #         notcars.append(image)
-    #     else:
-    #         cars.append(image)
 
     cars = glob.glob(path+'/vehicles/*/*.png')
     notcars = glob.glob(path+'/non-vehicles/*/*.png')
 
 
-    print("number of car images read:", len(cars))
-    print("number of noncar images read:", len(notcars))
+    print("total number of car images read:", len(cars))
+    print("total number of noncar images read:", len(notcars))
     min_size = min(len(cars), len(notcars))
     cars = cars[0:min_size]
     notcars = notcars[0:min_size]
-    print("number of car images read:", len(cars))
-    print("number of noncar images read:", len(notcars))
-
-    # Reduce the sample size because
-    # The quiz evaluator times out after 13s of CPU time
-    # sample_size = 500
-    # cars = cars[0:sample_size]
-    # notcars = notcars[0:sample_size]
+    print("Taken number of car images read:", len(cars))
+    print("Taken number of noncar images read:", len(notcars))
 
     return cars, notcars
 
@@ -185,10 +145,6 @@ def train_classifier(hog_trainer, images_path='dataset', param_file='output_rsc/
 # Define a function you will pass an image
 # and the list of windows to be searched (output of slide_windows())
 def search_windows(img, windows, clf, scaler, hog_trainer):
-    # print("search_windows hog_trainer: ",hog_trainer.printVals())
-    # print("hog_trainer colorspace: ",hog_trainer.color_space)
-    # print("svc classifier is: ",clf)
-    # print("X_scaler is:", scaler)
     #1) Create an empty list to receive positive detection windows
     on_windows = []
     #2) Iterate over all windows in the list
@@ -214,26 +170,6 @@ def search_windows(img, windows, clf, scaler, hog_trainer):
     return on_windows
 
 def search_draw_boxes(image, svc, X_scaler, hog_trainer, box_file='output_rsc/bbox_pickle.p'):
-        # # Uncomment the following line if you extracted training
-        # # data from .png images (scaled 0 to 1 by mpimg) and the
-        # # image you are searching is a .jpg (scaled 0 to 255)
-        # #image = image.astype(np.float32)/255
-        # draw_image = np.copy(image)
-        #
-        # x_start_stop=[None, None]
-        # y_start_stop = [None, None] # Min and max in y to search in slide_window()
-        # y_start_stop[0] = int(image.shape[0] * 0.5)
-        # print("x_start_stop is:", x_start_stop)
-        # print("y_start_stop is:", y_start_stop)
-        # windows = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop,
-        #                     xy_window=(96, 96), xy_overlap=(0.5, 0.5))
-        #
-        # hot_windows = search_windows(image, windows, svc, X_scaler, hog_trainer)
-        #
-        # save_bboxes(hot_windows, box_file=box_file)
-        #
-        # window_img = draw_boxes(draw_image, hot_windows, color=(0, 0, 255), thick=6)
-
         hot_windows, window_img = process_search_boxes(image, svc, X_scaler, hog_trainer)
 
         save_bboxes(hot_windows, box_file=box_file)
@@ -249,18 +185,11 @@ def process_search_boxes(image, svc, X_scaler, hog_trainer):
 
     x_start_stop=[int(image.shape[1] * 0.4), None]
     y_start_stop = [int(image.shape[0] * 0.5), int(image.shape[0] * 0.95)] # Min and max in y to search in slide_window()
-    # y_start_stop[0] = int(image.shape[0] * 0.5)
-    # y_start_stop[1] = int(image.shape[0] * 0.9)
-    # print("x_start_stop is:", x_start_stop)
-    # print("y_start_stop is:", y_start_stop)
+
     windows = slide_window(image, x_start_stop=x_start_stop, y_start_stop=y_start_stop,
                         xy_window=(96, 96), xy_overlap=(0.5, 0.5))
 
-    # print("windows are:", windows)
-
     hot_windows = search_windows(image, windows, svc, X_scaler, hog_trainer)
-
-    # print("hot_windows are:", hot_windows)
 
     window_img = draw_boxes(draw_image, hot_windows, color=(0, 0, 255), thick=6)
 
@@ -270,32 +199,23 @@ def process_search_boxes(image, svc, X_scaler, hog_trainer):
 def perform_training(hog_trainer, images_path='dataset', param_file='output_rsc/svc_pickle.p'):
     # cars, notcars = load_images(images_path)
     svc, X_scaler = train_classifier(hog_trainer, images_path=images_path, param_file=param_file)
-    # svc, X_scaler = hog_trainer.train_classifier(cars, notcars, param_file)
 
     return svc, X_scaler
 
 def run_image_pipeline(image):
-    # global hog_trainer
     global hot_boxes_list
     global bboxes_list
 
     draw_img = np.copy(image)
     image = image.astype(np.float32)/255
-    # image = normalise(image)
-    # print("run_image_pipeline hog_trainer: ",hog_trainer.printVals())
-    # print("type hog_trainer:", type(hog_trainer))
-    # print("hog_trainer color_space:", hog_trainer.color_space)
-    # print("after hog_trainer print")
-    # print("svc is:", svc)
+
     hot_boxes, window_img = process_search_boxes(image, svc, X_scaler, hog_trainer)
     hot_boxes_list.append(hot_boxes)
 
     # draw_img, heatmap, boxes = process_heatmap(draw_img, hot_boxes)
     # draw_img, heatmap, bboxes = process_heatmap_history(draw_img, hot_boxes_list, recent_frames_used=22, threshold=7)
-    draw_img, heatmap, bboxes = process_heatmap(draw_img, hot_boxes)
+    draw_img, heatmap, bboxes = process_heatmap_history(draw_img, hot_boxes_list)
     bboxes_list.append(bboxes)
-    # veh_tracker.isVehicleDetected(boxes)
-    # return draw_img
     return draw_img
 
 
@@ -303,11 +223,8 @@ def process_video(image_processor, param_file, in_vid, out_vid):
     global svc
     global X_scaler
     global hog_trainer
-    print("\nbefore process_video hog_trainer: ",hog_trainer.printVals())
-    print("before svc is:", svc)
     # Read in the saved svc, X_sclare and hog_trainer values
     svc, X_scaler, hog_trainer = load_params(hog_trainer, param_file=param_file)
-    print("after svc is:", svc)
     print("after process_video hog_trainer: ",hog_trainer.printVals())
     clip = VideoFileClip(in_vid)
     video_clip = clip.fl_image(image_processor) # function expects color image
@@ -319,21 +236,13 @@ def run_pipeline(pipeline, test_img, images_path='dataset', video_file='test_vid
     # image = cv2.imread(test_img)
     image = mpimg.imread(test_img)
     image = image.astype(np.float32)/255
-    # image = normalise(image)
-    # svc, X_scaler = 0, 0
     if 'train' in pipeline:
         svc, X_scaler = perform_training(hog_trainer, images_path=images_path, param_file=param_file)
-        # image = mpimg.imread('bbox-example-image.jpg')
-        # image = mpimg.imread('test_image.jpg')
     if 'search' in pipeline:
         if 'train' not in pipeline:
             svc, X_scaler, hog_trainer = load_params(hog_trainer, param_file=param_file)
 
         box_list, window_img = search_draw_boxes(image, svc, X_scaler, hog_trainer, box_file=box_file)
-        # if 'vid' not in pipeline:
-            # plt.imshow(cv2.cvtColor(window_img, cv2.COLOR_BGR2RGB))
-            # plt.imshow(window_img)
-            # plt.show()
 
     if 'sub' in pipeline:
         if 'train' not in pipeline:
@@ -345,7 +254,6 @@ def run_pipeline(pipeline, test_img, images_path='dataset', video_file='test_vid
             box_list = pickle.load( open( box_file, "rb" ))
 
         draw_img, heatmap, boxes = draw_heatmap(image, box_list)
-        # print("heatmap boxes are:", boxes)
     if 'vid' in pipeline:
         input_video_file = video_file
         output_video_file = input_video_file.split(".")[0] + '_proc.' + input_video_file.split(".")[1]
@@ -353,8 +261,6 @@ def run_pipeline(pipeline, test_img, images_path='dataset', video_file='test_vid
         # test_img = cv2.imread(test_image)
 
         process_video(image_processor=run_image_pipeline, param_file=param_file, in_vid=input_video_file, out_vid=output_video_file)
-
-
 
 
 
@@ -374,19 +280,6 @@ def main(argv):
     trans_sqrt = False
     spat_size = 16
     hist_bins = 32
-
-    # hog_trainer = Trainer(
-    #             color_space = 'RGB2LUV', #'RGB2YCrCb'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
-    #             orient = 9,  # HOG orientations
-    #             pix_per_cell = 8, # HOG pixels per cell
-    #             cell_per_block = 2, # HOG cells per block
-    #             hog_channel = 'ALL', # Can be 0, 1, 2, or "ALL"
-    #             spatial_size = (32, 32), # Spatial binning dimensions
-    #             hist_bins = 32, #16    # Number of histogram bins
-    #             spatial_feat = True, # Spatial features on or off
-    #             hist_feat = True, # Histogram features on or off
-    #             hog_feat = True) # HOG features on or off
-
 
     try:
         opts, args = getopt.getopt(argv,"hp:d:v:i:c:o:n:t:s:b:",["pipe", "dataset", "vid_file", "test_img", "colorsp=", "orient=", "num_chan=", "t_sqrt", "spat_size=", "hist_bins="])
@@ -427,20 +320,6 @@ def main(argv):
 
     print ('colorspace: {},\norientation: {},\nnumber of hog channels: {},\ntransform sqrt: {}\nspatial size: {},\nhistogram bins: {}-'\
      .format(colorspace, orient, hog_channel, trans_sqrt, (spat_size, spat_size), hist_bins))
-
-    # hog_trainer = Trainer(
-    #         color_space = colorspace, #'RGB2YCrCb'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
-    #         orient = orient,  # HOG orientations
-    #         pix_per_cell = 8, # HOG pixels per cell
-    #         cell_per_block = 2, # HOG cells per block
-    #         hog_channel = hog_channel, # Can be 0, 1, 2, or "ALL"
-    #         trans_sqrt = trans_sqrt, # transform square root, True, False
-    #         spatial_size = (spat_size, spat_size), # Spatial binning dimensions
-    #         hist_bins = hist_bins, #16    # Number of histogram bins
-    #         spatial_feat = True, # Spatial features on or off
-    #         hist_feat = True, # Histogram features on or off
-    #         hog_feat = True) # HOG features on or off
-
 
     hog_trainer.color_space = colorspace #'RGB2YCrCb'  # Can be RGB, HSV, LUV, HLS, YUV, YCrCb
     hog_trainer.orient = orient  # HOG orientations

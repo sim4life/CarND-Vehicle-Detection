@@ -43,23 +43,6 @@ def draw_labeled_bboxes(img, labels):
     return img, boxes
 
 def draw_heatmap(img, box_list):
-    # global box_list
-    # box_list = box_list_in
-    # heat = np.zeros_like(img[:,:,0]).astype(np.float)
-    #
-    # # Add heat to each box in box list
-    # heat = add_heat(heat,box_list)
-    #
-    # # Apply threshold to help remove false positives
-    # heat = apply_threshold(heat,1)
-    #
-    # # Visualize the heatmap when displaying
-    # heatmap = np.clip(heat, 0, 255)
-    #
-    # # Find final boxes from heatmap using label function
-    # labels = label(heatmap)
-    # draw_img = draw_labeled_bboxes(np.copy(img), labels)
-
     draw_img, heatmap, boxes = process_heatmap(img, box_list)
     fig = plt.figure()
     plt.subplot(121)
@@ -96,9 +79,6 @@ def process_heatmap(img, box_list):
     return draw_img, heatmap, boxes
 
 def process_heatmap_history(img, all_bbox_list, recent_frames_used=20, threshold=5):
-    # global box_list
-    # global heatmap
-
     # Finding out valid recent_frames_used
     if len(all_bbox_list) < recent_frames_used + 1:
         recent_frames_used = len(all_bbox_list) - 1
@@ -123,7 +103,6 @@ def process_heatmap_history(img, all_bbox_list, recent_frames_used=20, threshold
     return draw_img, heatmap, bboxes
 
 def main(argv):
-    # image = mpimg.imread('cutouts/cutout1.jpg')
     box_file='output_rsc/bbox_pickle.p'
     test_img = 'test_image.jpg'
 
